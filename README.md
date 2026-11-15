@@ -1,5 +1,7 @@
 # CMS-UI
 
+**简体中文** · [English](README.en.md)
+
 一套开箱可用的 UI 与动效组件库：组件、主题、字体、原生弹簧引擎和完整文档都在仓库里。
 克隆下来就能跑示例，把 `library/` 复制进工程就能接入。
 
@@ -208,7 +210,7 @@ implementation(project(":shared-elements"))
 - **采样安全**：玻璃控件不得位于自己的采样源内，否则 `LiquidGlassView.bind()` 会拒绝绑定。
 - **原生库**：Android 运行时需要 `libCLEARMotionPro.so` + 编译出的 `libclearmotion_jni.so`。
 - **16KB 页对齐**：JNI 以 `max-page-size=16384` 构建；随附 arm64 引擎的 LOAD 对齐为 `0x4000`。
-- **许可**：`library/modules/*` 各自带 `LICENSE`；CLEAR Motion Pro 见 `library/native/licenses/`。
+- **许可**：本项目为 Apache-2.0；第三方组件、字体与引擎二进制的许可见 [`NOTICE.md`](NOTICE.md)，`library/modules/*` 各自带 `LICENSE`。
 
 ---
 
@@ -221,3 +223,17 @@ implementation(project(":shared-elements"))
 - [`docs/05-组件命名.md`](docs/05-组件命名.md) — 中英文名称与接口迁移
 - [`docs/06-统一入口与全局配置.md`](docs/06-统一入口与全局配置.md) — **`CMS` 门面、`CMSSettings` 全局默认、Tab 三种形态**
 - [`docs/v1.0/`](docs/v1.0/) — 1.0 历史文档
+
+---
+
+## 八、许可与第三方组件
+
+- 本项目：Apache License 2.0，见 [`LICENSE`](LICENSE)。
+- 第三方组件、字体与引擎二进制的完整清单与许可：[`NOTICE.md`](NOTICE.md)。
+- HarmonyOS Sans 字体随整体软件分发，未经修改，许可文本见 `library/res/font/LICENSE-HarmonyOS-Sans.txt`。
+
+---
+
+© 2026 芜湖灵动亿创网络科技有限公司 (Wuhu Lindicra Network Technology Co., Ltd)
+
+本项目的法律主体以上述中文名称为准。
