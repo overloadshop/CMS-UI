@@ -2,6 +2,9 @@
 
 **简体中文** · [English](README.en.md)
 
+> **双源同步** · [GitHub](https://github.com/overloadshop/CMS-UI) / [GitCode](https://gitcode.com/bananabanxian/CMS-UI)
+> GitHub 为主源，GitCode 为镜像，两边内容一致。
+
 一套开箱可用的 UI 与动效组件库：组件、主题、字体、原生弹簧引擎和完整文档都在仓库里。
 克隆下来就能跑示例，把 `library/` 复制进工程就能接入。
 
@@ -11,9 +14,13 @@
 
 ```bash
 git clone https://github.com/overloadshop/CMS-UI.git
+# 国内网络可用 GitCode 镜像
+git clone https://gitcode.com/bananabanxian/CMS-UI.git
 ```
 
-- **看效果**：用 Android Studio 打开仓库根目录，选 `example` 运行；或直接下载 [Releases](https://github.com/overloadshop/CMS-UI/releases/latest) 里的 APK。
+- **看效果**：用 Android Studio 打开仓库根目录，选 `example` 运行；或直接下载
+  [GitHub Releases](https://github.com/overloadshop/CMS-UI/releases/latest) /
+  [GitCode Releases](https://gitcode.com/bananabanxian/CMS-UI/releases) 里的 APK。
 - **接进自己的工程**：把 `library/` 放到宿主 `app` 同级，合并 `gradle/settings-snippet.gradle.kts`，
   再 `implementation(project(":cms-core"))`。包名、资源、字体、JNI 都由这个模块带入，不用改宿主 namespace。
 - **只要源码**：复制 `library/cms/com`、`library/theme/com`、`library/res`、`library/native`，

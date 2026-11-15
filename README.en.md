@@ -2,6 +2,9 @@
 
 [简体中文](README.md) · **English**
 
+> **Mirrored** · [GitHub](https://github.com/overloadshop/CMS-UI) / [GitCode](https://gitcode.com/bananabanxian/CMS-UI)
+> GitHub is the primary source; GitCode is a mirror and stays in sync.
+
 A ready-to-use UI and motion component library for Android. Components, theme, fonts, a native
 spring engine and the full documentation all live in this repository: clone it and the sample app
 runs, copy `library/` into your project and you are done.
@@ -12,10 +15,13 @@ runs, copy `library/` into your project and you are done.
 
 ```bash
 git clone https://github.com/overloadshop/CMS-UI.git
+# mainland China mirror
+git clone https://gitcode.com/bananabanxian/CMS-UI.git
 ```
 
 - **See it running** — open the repository root in Android Studio and run `example`, or download
-  the APK from [Releases](https://github.com/overloadshop/CMS-UI/releases/latest).
+  the APK from [GitHub Releases](https://github.com/overloadshop/CMS-UI/releases/latest) /
+  [GitCode Releases](https://gitcode.com/bananabanxian/CMS-UI/releases).
 - **Add it to your app** — put `library/` next to your `app` module, merge
   `gradle/settings-snippet.gradle.kts`, then `implementation(project(":cms-core"))`.
   Namespace, resources, fonts and JNI come with the module; nothing in the host has to be renamed.
