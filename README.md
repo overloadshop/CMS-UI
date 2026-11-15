@@ -1,18 +1,24 @@
-# CMS-UI — CLEAR UI / 动效组件库
+# CMS-UI
 
-**版本：1.1.0**（代码内常量 `com.lindicra.cms.CMS_VERSION`）
+一套开箱可用的 UI 与动效组件库：组件、主题、字体、原生弹簧引擎和完整文档都在仓库里。
+克隆下来就能跑示例，把 `library/` 复制进工程就能接入。
 
-一套可移植的 UI / 动效组件库，仓库分成组件库与示例应用两部分：
+**版本 1.1.0** · Kotlin `2.3.21` · Compose BOM `2025.04.01` · 最低 Android 12
 
-| 目录 | 内容 |
-| --- | --- |
-| `library/` | 组件库本体：组件源码、库模块、主题、资源、JNI 与依赖模块 |
-| `example/` | CMS 示例应用源码；安装包通过 GitHub Releases 提供，不随仓库提交 |
-| `docs/` | 组件文档与集成指南，同时作为示例应用的离线文档资源 |
+## 先跑起来
 
-- 包名：`com.lindicra.cms`（组件）/ `com.lindicra.cms.ui.theme`（主题）
-- 最低 SDK：**31（Android 12）**
-- Kotlin `2.3.21` · Compose BOM `2025.04.01` · AGP `8.13.2` · haze `1.7.1`
+```bash
+git clone https://github.com/overloadshop/CMS-UI.git
+```
+
+- **看效果**：用 Android Studio 打开仓库根目录，选 `example` 运行；或直接下载 Releases 里的 APK。
+- **接进自己的工程**：把 `library/` 放到宿主 `app` 同级，合并 `gradle/settings-snippet.gradle.kts`，
+  再 `implementation(project(":cms-core"))`。包名、资源、字体、JNI 都由这个模块带入，不用改宿主 namespace。
+- **只要源码**：复制 `library/cms/com`、`library/theme/com`、`library/res`、`library/native`，
+  按 [`docs/03-集成指南.md`](docs/03-集成指南.md) 补齐依赖。
+
+默认值就能用：一次 `CMS.Appearance.Provide { CMS.Appearance.Theme { … } }` 统一深浅色、强调色、
+玻璃材质与触感，单个组件仍可单独覆盖。
 
 ---
 
