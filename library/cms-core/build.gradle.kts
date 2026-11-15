@@ -12,7 +12,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
     sourceSets.getByName("main") {
-        // 只编译 1.1.0 的 com.lindicra.cms 包；1.0 的 ldyc.qy.music 源码已移到 legacy-v1.0/。
+        // 只编译 1.1.0 的 com.lindicra.cms 包；1.0 的 ldyc.qy.music 源码不在本仓库内。
         java.srcDirs("../cms/com", "../theme/com")
         res.srcDir("../res")
         jniLibs.srcDir("../native/jniLibs")

@@ -146,7 +146,6 @@ CMS.Appearance.Provide(CMSSettings(darkTheme = true, tabForm = CMSTabForm.Floati
 源码复制方式如下：
 
 1. 复制源码：`library/cms/com/lindicra/cms/` → 宿主 `com/lindicra/cms/`；`library/theme/com/lindicra/cms/ui/theme/` → 宿主同路径。
-   1.0 的 `ldyc.qy.music` 版本留在 `legacy-v1.0/`，只作历史参考，不参与编译。
 2. 复制资源：`library/res/font/*.ttf`、`library/res/drawable/chevron_left.xml`。
 3. 复制模块：`library/modules/*` → 宿主根目录，按 `gradle/settings-snippet.gradle.kts` 执行 `include`。
 4. 复制原生引擎：`library/native/jniLibs/*` → `app/src/main/jniLibs/`，桥接源码 → `app/src/main/cpp/`。
