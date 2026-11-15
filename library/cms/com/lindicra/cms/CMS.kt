@@ -53,7 +53,7 @@ import com.lindicra.cms.ui.theme.SecondaryText
 import dev.chrisbanes.haze.HazeState
 
 /**
- * AndroidCMS 入口，按 系统（声明式）的组件体系组织：
+ * CMS-UI 入口，按 系统（声明式）的组件体系组织：
  *
  * - [Appearance]：主题与全局外观
  * - [Navigation]：TabView、返回按钮

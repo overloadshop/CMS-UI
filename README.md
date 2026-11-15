@@ -1,9 +1,14 @@
-# AndroidCMS — CLEAR 安卓 UI / 动效组件包
+# CMS-UI — CLEAR UI / 动效组件库
 
 **版本：1.1.0**（代码内常量 `com.lindicra.cms.CMS_VERSION`）
 
-一套可移植的安卓 UI / 动效组件包。
-本目录包含独立库模块和安卓示例软件，可单独打开、构建，也可整体复制到其他工程。
+一套可移植的 UI / 动效组件库，仓库分成组件库与示例应用两部分：
+
+| 目录 | 内容 |
+| --- | --- |
+| `library/` | 组件库本体：组件源码、库模块、主题、资源、JNI 与依赖模块 |
+| `example/` | CMS 示例应用源码；安装包通过 GitHub Releases 提供，不随仓库提交 |
+| `docs/` | 组件文档与集成指南，同时作为示例应用的离线文档资源 |
 
 - 包名：`com.lindicra.cms`（组件）/ `com.lindicra.cms.ui.theme`（主题）
 - 最低 SDK：**31（Android 12）**
@@ -15,17 +20,17 @@
 
 | 路径 | 内容 |
 | --- | --- |
-| `cms/` | CMS 组件源码（Compose + 自定义 View），可独立编译 |
-| `cms-core/` | 正式 Android 库模块，统一编译组件、主题、资源与 JNI |
-| `example/` | 独立安卓示例软件，直接依赖 `:cms-core` |
-| `optional/` | 可选组件（依赖宿主业务类，按需复制） |
-| `theme/` | 主题与宿主接口：色板、`GlassMaterial`、`CMSHaptics`、`CMSBackHistory` |
-| `res/font/` | HarmonyOS Sans SC 七个字重（`Type.kt` 依赖 `R.font.*`） |
-| `res/drawable/` | 组件图标（`chevron_left.xml`） |
-| `modules/liquidglass/` | 液态玻璃库模块，namespace `com.qmdeve.liquidglass` |
-| `modules/continuous-rounded-corner/` | 连续圆角（Squircle）库模块 |
-| `modules/shared-elements/` | Compose 共享元素转场库模块 |
-| `native/` | CLEAR Motion Pro 预编译库与 JNI 桥（引擎源码见独立仓库） |
+| `library/cms/` | CMS 组件源码（Compose + 自定义 View），可独立编译 |
+| `library/cms-core/` | 正式 Android 库模块，统一编译组件、主题、资源与 JNI |
+| `example/` | 示例应用：组件目录、编辑页、独立进程预览与离线文档 |
+| `library/optional/` | 可选组件（依赖宿主业务类，按需复制） |
+| `library/theme/` | 主题与宿主接口：色板、`GlassMaterial`、`CMSHaptics`、`CMSBackHistory` |
+| `library/res/font/` | HarmonyOS Sans SC 七个字重（`Type.kt` 依赖 `R.font.*`） |
+| `library/res/drawable/` | 组件图标（`chevron_left.xml`） |
+| `library/modules/liquidglass/` | 液态玻璃库模块，namespace `com.qmdeve.liquidglass` |
+| `library/modules/continuous-rounded-corner/` | 连续圆角（Squircle）库模块 |
+| `library/modules/shared-elements/` | Compose 共享元素转场库模块 |
+| `library/native/` | CLEAR Motion Pro 预编译库与 JNI 桥（引擎源码见独立仓库） |
 | `gradle/` | `libs.versions.toml` + `settings-snippet.gradle.kts` |
 | `docs/` | 1.1.0 文档；`docs/v1.0/` 为 1.0 历史文档 |
 | `docs/components/` | 独立组件文档与交互索引：参数、状态、接入边界和通用代码示例 |
@@ -34,7 +39,7 @@
 
 ## 二、组件清单（1.1.0）
 
-组件采用统一的中英文名称。命名和兼容迁移见 [`docs/05-组件命名.md`](docs/05-组件命名.md)，新版入口集中在 `cms/CMSComponents.kt`，沿用现有组件实现。
+组件采用统一的中英文名称。命名和兼容迁移见 [`docs/05-组件命名.md`](docs/05-组件命名.md)，新版入口集中在 `library/cms/CMSComponents.kt`，沿用现有组件实现。
 
 ### 玻璃与采样
 
@@ -76,7 +81,7 @@
 | `CLEARMotion.kt` | `CLEARMotion`、`SpringDriver` | 原生弹簧 JNI 封装与 Kotlin 回退 |
 | `DeveloperSettings.kt` | `DeveloperSettings` | 调试开关 |
 
-### 主题与宿主接口（`theme/`）
+### 主题与宿主接口（`library/theme/`）
 
 | 文件 | 导出 | 说明 |
 | --- | --- | --- |
@@ -86,7 +91,7 @@
 | `CMSHaptics.kt` | `CMSHaptics`、`CMSHapticsProvider`、`CMSHapticKind`、`rememberCMSHaptic` | **统一震动接口** |
 | `CMSBackHistory.kt` | `CMSBackHistory`、`CMSBackDestination`、`LocalCMSBackHistory` | 返回历史接口 |
 
-### 可选组件（`optional/`）
+### 可选组件（`library/optional/`）
 
 | 文件 | 导出 | 依赖 |
 | --- | --- | --- |
@@ -134,11 +139,11 @@ CMS.Appearance.Provide(CMSSettings(darkTheme = true, tabForm = CMSTabForm.Floati
 宿主以模块接入时依赖 `:cms-core`，它自动带入主题、字体、VIBRATE 权限、JNI 与依赖模块。
 源码复制方式如下：
 
-1. 复制源码：`cms/com/lindicra/cms/` → 宿主 `com/lindicra/cms/`；`theme/com/lindicra/cms/ui/theme/` → 宿主同路径。
+1. 复制源码：`library/cms/com/lindicra/cms/` → 宿主 `com/lindicra/cms/`；`library/theme/com/lindicra/cms/ui/theme/` → 宿主同路径。
    1.0 的 `ldyc.qy.music` 版本留在 `legacy-v1.0/`，只作历史参考，不参与编译。
-2. 复制资源：`res/font/*.ttf`、`res/drawable/chevron_left.xml`。
-3. 复制模块：`modules/*` → 宿主根目录，按 `gradle/settings-snippet.gradle.kts` 执行 `include`。
-4. 复制原生引擎：`native/jniLibs/*` → `app/src/main/jniLibs/`，桥接源码 → `app/src/main/cpp/`。
+2. 复制资源：`library/res/font/*.ttf`、`library/res/drawable/chevron_left.xml`。
+3. 复制模块：`library/modules/*` → 宿主根目录，按 `gradle/settings-snippet.gradle.kts` 执行 `include`。
+4. 复制原生引擎：`library/native/jniLibs/*` → `app/src/main/jniLibs/`，桥接源码 → `app/src/main/cpp/`。
 5. 补齐依赖（见下节），用 `CMSTheme` 或自己的主题提供 Local。
 
 完整步骤见 [`docs/03-集成指南.md`](docs/03-集成指南.md)。
@@ -180,7 +185,7 @@ implementation(project(":shared-elements"))
 - 新增统一震动接口 `CMSHaptics` 与返回历史接口 `CMSBackHistory`；
 - 主题补齐 CLEAR Design 色板与 `GlassMaterial`；
 - haze 升级到 1.7.1（移除 `haze-blur` 依赖）；
-- `optional/CMPlayerBackground.kt` 移出默认编译范围。
+- `library/optional/CMPlayerBackground.kt` 移出默认编译范围。
 - 新增 `cms-core` 与 `example`，可以脱离宿主独立构建；
 - 返回历史菜单显式固定页面采样源，统一跨窗口坐标与绘制监听。
 - 公开调用面改为 iOS / SwiftUI 式分类：`CMS.Appearance / Navigation / Controls / Content / Presentation`，并删除旧的 `CMS.*` 平铺名字。
@@ -198,7 +203,7 @@ implementation(project(":shared-elements"))
 - **采样安全**：玻璃控件不得位于自己的采样源内，否则 `LiquidGlassView.bind()` 会拒绝绑定。
 - **原生库**：Android 运行时需要 `libCLEARMotionPro.so` + 编译出的 `libclearmotion_jni.so`。
 - **16KB 页对齐**：JNI 以 `max-page-size=16384` 构建；随附 arm64 引擎的 LOAD 对齐为 `0x4000`。
-- **许可**：`modules/*` 各自带 `LICENSE`；CLEAR Motion Pro 见 `native/licenses/`。
+- **许可**：`library/modules/*` 各自带 `LICENSE`；CLEAR Motion Pro 见 `library/native/licenses/`。
 
 ---
 

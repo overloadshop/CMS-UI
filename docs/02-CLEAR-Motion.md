@@ -6,10 +6,10 @@
 
 | 层 | 位置 | 说明 |
 | --- | --- | --- |
-| 引擎二进制 | `native/jniLibs/<abi>/libCLEARMotionPro.so` | 弹簧、滚动、物理步进；源码在独立的 CLEAR Motion 仓库 |
-| JNI 桥 | `native/clearmotion_jni_bridge.cpp` | 导出 `native*` 方法 |
-| Kotlin 封装 | `cms/CLEARMotion.kt` | `external` 声明 + 加载 `clearmotion_jni` |
-| Kotlin 驱动 | `cms/CLEARMotion.kt` → `SpringDriver` | 独立纯 Kotlin 弹簧，不会自动替换原生调用 |
+| 引擎二进制 | `library/native/jniLibs/<abi>/libCLEARMotionPro.so` | 弹簧、滚动、物理步进；源码在独立的 CLEAR Motion 仓库 |
+| JNI 桥 | `library/native/clearmotion_jni_bridge.cpp` | 导出 `native*` 方法 |
+| Kotlin 封装 | `library/cms/CLEARMotion.kt` | `external` 声明 + 加载 `clearmotion_jni` |
+| Kotlin 驱动 | `library/cms/CLEARMotion.kt` → `SpringDriver` | 独立纯 Kotlin 弹簧，不会自动替换原生调用 |
 
 引擎本体已独立开源，本仓库只分发预编译库与 JNI 桥，不包含引擎源码与头文件。
 
@@ -94,8 +94,8 @@ LaunchedEffect(Unit) {
 使用 `cms-core` 模块时，预编译引擎、JNI 编译、16KB 链接选项和 JNI 保留规则已经配置。
 无需手工复制 native 文件。以下用于源码复制方式。
 
-1. `native/jniLibs/<abi>/libCLEARMotionPro.so` → 宿主 `app/src/main/jniLibs/<abi>/`；
-2. `native/clearmotion_jni_bridge.cpp`、`CMakeLists.txt` → 宿主 `app/src/main/cpp/`；
+1. `library/native/jniLibs/<abi>/libCLEARMotionPro.so` → 宿主 `app/src/main/jniLibs/<abi>/`；
+2. `library/native/clearmotion_jni_bridge.cpp`、`CMakeLists.txt` → 宿主 `app/src/main/cpp/`；
 3. `app/build.gradle.kts` 配置：
 
 ```kotlin
@@ -130,6 +130,6 @@ android {
 
 ## 6. 许可
 
-本仓库只随包分发 CLEAR Motion Pro 的预编译库，`native/licenses/` 内含 `LICENSE`、
+本仓库只随包分发 CLEAR Motion Pro 的预编译库，`library/native/licenses/` 内含 `LICENSE`、
 `LICENSE-PROPRIETARY` 与 `NOTICE`，分发时请一并保留。引擎源码与构建方式见独立的
 CLEAR Motion 仓库（MIT）。

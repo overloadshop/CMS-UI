@@ -26,7 +26,7 @@ android {
         cmake {
             path = file("../native/CMakeLists.txt")
             version = "3.22.1"
-            buildStagingDirectory = file("${System.getProperty("java.io.tmpdir")}/AndroidCMS-native")
+            buildStagingDirectory = file("${System.getProperty("java.io.tmpdir")}/CMS-UI-native")
         }
     }
 }

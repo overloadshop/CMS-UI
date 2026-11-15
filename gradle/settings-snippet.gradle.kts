@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────
-// AndroidCMS 1.1.0 集成片段 —— 追加到宿主工程的 settings.gradle.kts 末尾
+// CMS-UI 1.1.0 集成片段 —— 追加到宿主工程的 settings.gradle.kts 末尾
 //
-// 前置：完整 AndroidCMS 文件夹与宿主 app 模块同级。
+// 前置：完整 CMS-UI 文件夹与宿主 app 模块同级。
 // 宿主 version catalog 需要合并本包 gradle/libs.versions.toml 中的别名。
 // ─────────────────────────────────────────────────────────────
 
@@ -9,10 +9,10 @@ include(":cms-core")
 include(":liquidglass")
 include(":continuous-rounded-corner")
 include(":shared-elements")
-project(":cms-core").projectDir = file("AndroidCMS/cms-core")
-project(":liquidglass").projectDir = file("AndroidCMS/modules/liquidglass")
-project(":continuous-rounded-corner").projectDir = file("AndroidCMS/modules/continuous-rounded-corner")
-project(":shared-elements").projectDir = file("AndroidCMS/modules/shared-elements")
+project(":cms-core").projectDir = file("CMS-UI/library/cms-core")
+project(":liquidglass").projectDir = file("CMS-UI/library/modules/liquidglass")
+project(":continuous-rounded-corner").projectDir = file("CMS-UI/library/modules/continuous-rounded-corner")
+project(":shared-elements").projectDir = file("CMS-UI/library/modules/shared-elements")
 
 // 说明：
 // 1) 三个模块的 build.gradle.kts 使用 version catalog 别名

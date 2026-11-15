@@ -5,7 +5,7 @@
 
 ## 打开与构建
 
-用 Android Studio 打开 **AndroidCMS 根目录**，选择 `example` 运行。
+用 Android Studio 打开 **CMS-UI 根目录**，选择 `example` 运行。
 需要 Android SDK 36、NDK 27.0.12077973、CMake 3.22.1；最低 Android 12。
 
 示例本身已改用统一入口：
@@ -27,12 +27,12 @@ $env:ANDROID_HOME = "你的 SDK 路径"
 .\gradlew.bat :example:assembleDebug
 ```
 
-或在 AndroidCMS 根目录创建 `local.properties`，设置 `sdk.dir`。
-Gradle Wrapper、组件源码、资源、三个依赖模块和原生引擎都在 AndroidCMS 内。
+或在 CMS-UI 根目录创建 `local.properties`，设置 `sdk.dir`。
+Gradle Wrapper、组件源码、资源、三个依赖模块和原生引擎都在 CMS-UI 内。
 首次构建会下载 Maven 依赖，无需连接宿主工程。
 
-中间输出位于系统临时目录 `AndroidCMS-build/`。
-示例 APK 构建路径为 `AndroidCMS-build/example/outputs/apk/debug/example-debug.apk`。
+中间输出位于系统临时目录 `CMS-UI-build/`。
+示例 APK 构建路径为 `CMS-UI-build/example/outputs/apk/debug/example-debug.apk`。
 安装包通过 GitHub Releases 提供，不随仓库提交。
 
 ## 可体验内容

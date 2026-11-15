@@ -17,8 +17,10 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "AndroidCMS"
+rootProject.name = "CMS-UI"
 include(":cms-core", ":example", ":liquidglass", ":continuous-rounded-corner", ":shared-elements")
-project(":liquidglass").projectDir = file("modules/liquidglass")
-project(":continuous-rounded-corner").projectDir = file("modules/continuous-rounded-corner")
-project(":shared-elements").projectDir = file("modules/shared-elements")
+project(":cms-core").projectDir = file("library/cms-core")
+project(":example").projectDir = file("example")
+project(":liquidglass").projectDir = file("library/modules/liquidglass")
+project(":continuous-rounded-corner").projectDir = file("library/modules/continuous-rounded-corner")
+project(":shared-elements").projectDir = file("library/modules/shared-elements")

@@ -70,7 +70,7 @@ internal fun MarkdownDocument(document: String, assetPath: String) {
 
 internal fun copyCode(context: Context, code: String) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    clipboard.setPrimaryClip(ClipData.newPlainText("AndroidCMS code", code))
+    clipboard.setPrimaryClip(ClipData.newPlainText("CMS-UI code", code))
     Toast.makeText(context, "已复制代码", Toast.LENGTH_SHORT).show()
 }
 

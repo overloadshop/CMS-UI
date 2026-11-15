@@ -205,7 +205,7 @@ private fun CMSHome() {
                 )
             )
             CMS.Navigation.MainTopBar(
-                title = "AndroidCMS",
+                title = "CMS-UI",
                 topInset = topInset,
                 hazeState = haze,
                 glassEnabled = false,
@@ -269,7 +269,7 @@ private fun ComponentsPage(
                     }
                 }
             }
-            CMS.Content.SectionTitle("AndroidCMS · $CMS_VERSION")
+            CMS.Content.SectionTitle("CMS-UI · $CMS_VERSION")
         }
         Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
     }
