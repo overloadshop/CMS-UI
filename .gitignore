@@ -1,0 +1,26 @@
+# Gradle / Android 构建产物
+.gradle/
+.kotlin/
+.idea/
+local.properties
+**/build/
+**/.cxx/
+*.iml
+captures/
+
+# 打包产物（示例 APK / AAB 不入库，发布走 Release）
+*.apk
+*.aab
+*.ap_
+*.idsig
+
+# JVM 崩溃与回放日志
+hs_err_pid*.log
+replay_pid*.log
+*.hprof
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/

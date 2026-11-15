@@ -1,0 +1,270 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2025 QmDeve
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * ===========================================
+ * Project: AndroidLiquidGlassView
+ * Created Date: 2025-11-01
+ * Author: QmDeve
+ * GitHub: https://github.com/QmDeve/AndroidLiquidGlassView
+ *
+ * Contributors:
+ * - Donny Yale - https://github.com/QmDeve
+ * - Ahmed Sbai - https://github.com/sbaiahmed1
+ * ===========================================
+ */
+
+uniform shader content;
+uniform float4 fluidRestingTint;
+uniform float fluidOpticalProgress;
+uniform float2 size;
+uniform float2 offset;
+uniform float4 cornerRadii;
+uniform float refractionHeight;
+uniform float refractionAmount;
+uniform float depthEffect;
+uniform float chromaticAberration;
+
+uniform float contrast;
+uniform float whitePoint;
+uniform float chromaMultiplier;
+
+uniform float3 tintColor;
+uniform float tintAlpha;
+uniform float edgeOnly;
+uniform float2 fluidBody;
+uniform float2 fluidModes;
+
+const half3 rgbToY = half3(0.2126, 0.7152, 0.0722);
+
+float radiusAt(float2 coord, float4 radii) {
+    if (coord.x >= 0.0) {
+        if (coord.y <= 0.0) return radii.y;
+        else return radii.z;
+    } else {
+        if (coord.y <= 0.0) return radii.x;
+        else return radii.w;
+    }
+}
+
+float sdRoundedRect(float2 coord, float2 halfSize, float radius) {
+    float2 cornerCoord = abs(coord) - (halfSize - float2(radius));
+    float outside = length(max(cornerCoord, 0.0)) - radius;
+    float inside = min(max(cornerCoord.x, cornerCoord.y), 0.0);
+    return outside + inside;
+}
+
+float safeSign(float value) {
+    return value < 0.0 ? -1.0 : 1.0;
+}
+
+float2 safeNormalize(float2 value, float2 fallback) {
+    float len = length(value);
+    if (len > 0.001) {
+        return value / len;
+    }
+    return fallback;
+}
+
+float2 gradSdRoundedRect(float2 coord, float2 halfSize, float radius) {
+    float2 cornerCoord = abs(coord) - (halfSize - float2(radius));
+    if (cornerCoord.x >= 0.0 || cornerCoord.y >= 0.0) {
+        float2 outside = max(cornerCoord, 0.0);
+        float outsideLength = length(outside);
+        if (outsideLength > 0.001) {
+            return sign(coord) * (outside / outsideLength);
+        }
+        float useX = step(cornerCoord.y, cornerCoord.x);
+        return float2(
+            useX * safeSign(coord.x),
+            (1.0 - useX) * safeSign(coord.y)
+        );
+    } else {
+        float gradX = step(cornerCoord.y, cornerCoord.x);
+        return sign(coord) * float2(gradX, 1.0 - gradX);
+    }
+}
+
+float circleMap(float x) {
+    return 1.0 - sqrt(1.0 - x * x);
+}
+
+half4 saturateColor(half4 color, float amount) {
+    half3 lin = toLinearSrgb(color.rgb);
+    float y = dot(lin, rgbToY);
+    half3 gray = half3(y);
+    half3 sat = fromLinearSrgb(mix(gray, lin, amount));
+    return half4(sat, color.a);
+}
+
+float fluidDistance(float2 p) {
+    // Shape-mode deformation shared with the capsule: a determinant-one extension along
+    // x, then an area-preserving fore/aft bend. These stay at their physical gains;
+    // amplifying them made horizontal drags overshoot like jelly instead of glass.
+    float stretch = exp(fluidModes.x);
+    float y = p.y * stretch;
+    float vertical = 2.0 * y / fluidBody.y;
+    float bend = fluidModes.y * fluidBody.x * 0.12 *
+        (1.0 - vertical * vertical);
+    float2 rest = float2(p.x / stretch - bend, y);
+    return sdRoundedRect(rest, fluidBody * 0.5, min(fluidBody.x, fluidBody.y) * 0.5);
+}
+
+half4 fluidGlass(float2 coord) {
+    float2 p = coord - size * 0.5;
+    float raw = fluidDistance(p);
+    float2 gradient = float2(
+        fluidDistance(p + float2(0.5, 0.0)) - fluidDistance(p - float2(0.5, 0.0)),
+        fluidDistance(p + float2(0.0, 0.5)) - fluidDistance(p - float2(0.0, 0.5)));
+    float sd = raw / max(length(gradient), 0.1);
+    float coverage = 1.0 - smoothstep(-0.65, 0.65, sd);
+    if (coverage <= 0.0) return half4(0.0);
+    float2 normal = safeNormalize(gradient, float2(0.0, 1.0));
+    float shortSide = min(fluidBody.x, fluidBody.y);
+    float rimWidth = clamp(refractionHeight * 3.5, 1.0, max(shortSide * 0.16, 1.0));
+    float depth = clamp(-sd / rimWidth, 0.0, 1.0);
+    // This material is a thin lens, not a pane of coloured glass. Its body is a hole:
+    // the eye keeps seeing the real screen there, untouched, so nothing can double up
+    // and no pigment may be painted over it. Only the curved rim is drawn.
+    float optical = smoothstep(0.0, 1.0, clamp(fluidOpticalProgress, 0.0, 1.0));
+    // The band has to be wide enough to actually bend the page; narrowing it to a
+    // hairline erased the refraction instead of cleaning it up. The alpha fades over most
+    // of the band so the frosted sample dissolves into the sharp screen without a cut.
+    float ring = 1.0 - smoothstep(0.55, 1.0, depth);
+    // The rim only exists while the lens is lifted: at rest it must dissolve into the
+    // small indicator, otherwise a glass ring stays painted over the resting tint.
+    float alpha = coverage * ring * optical;
+    if (alpha <= 0.0) return half4(0.0);
+    // Zero displacement at the inner edge of the band, maximum at the silhouette:
+    // the rim is the only thing that moves, and it rejoins the screen seamlessly.
+    float slope = smoothstep(0.0, 1.0, 1.0 - depth);
+    float displacement = min(abs(refractionAmount), rimWidth * 0.8) * optical;
+    // The lens is wider than it is tall, so its left/right shoulders are far shallower
+    // than its top/bottom ones. Resolve the bend into its axes instead of moving along
+    // the unit normal, which collapsed every direction into equal inward pull.
+    float2 aniso = safeNormalize(float2(normal.x * 0.5, normal.y * 1.55), normal);
+    float2 bend = aniso * displacement * slope;
+    float2 refracted = coord - bend;
+    // Real glass splits colour at its curved edge. The split follows the bend, so it only
+    // appears in the band that is actually refracting, never over the clear body.
+    float dispersion = chromaticAberration * 1.8 * optical * slope;
+    float2 dispersed = bend * dispersion;
+    half4 sampled = content.eval(refracted);
+    sampled = half4(
+        content.eval(refracted + dispersed).r,
+        sampled.g,
+        content.eval(refracted - dispersed).b,
+        sampled.a);
+    // Fresnel rim: only the top and bottom shoulders catch light. The left and right
+    // sides of the capsule stay dark, which is what keeps the edge from reading as a frame.
+    float rimSigma = max(min(fluidBody.x, fluidBody.y) * 0.012, 1.0);
+    float rimDistance = (sd + 0.6) / max(rimSigma, 0.55);
+    float rim = exp(-rimDistance * rimDistance);
+    float light = 0.36 * abs(normal.y);
+    float highlight = rim * light * optical * ring;
+    // `content` is premultiplied, so white has to be added as (1,1,1) * alpha. Mixing a
+    // straight white into the RGB alone left colour above alpha, which the compositor
+    // turned into an extra white wash exactly where the sample was transparent.
+    sampled.rgb = sampled.rgb * (1.0 - highlight) + half3(1.0) * sampled.a * highlight;
+    return sampled * alpha;
+}
+
+half4 main(float2 coord) {
+    if (fluidBody.x > 0.0 && fluidBody.y > 0.0) return fluidGlass(coord);
+    float2 halfSize = size * 0.5;
+    float2 centeredCoord = (coord + offset) - halfSize;
+    float radius = radiusAt(centeredCoord, cornerRadii);
+
+    float sd = sdRoundedRect(centeredCoord, halfSize, radius);
+    if (-sd >= refractionHeight) {
+        if (edgeOnly > 0.5) return half4(0.0);
+        half4 baseColor = content.eval(coord);
+
+        baseColor = saturateColor(baseColor, chromaMultiplier);
+        float3 target = (whitePoint > 0.0) ? float3(1.0) : float3(0.0);
+        baseColor.rgb = mix(baseColor.rgb, target, abs(whitePoint));
+        baseColor.rgb = (baseColor.rgb - 0.5) * (1.0 + contrast) + 0.5;
+
+        half3 tintedRGB = mix(baseColor.rgb, tintColor, tintAlpha);
+        return half4(tintedRGB, baseColor.a);
+    }
+
+    sd = min(sd, 0.0);
+    float d = circleMap(1.0 - -sd / refractionHeight) * refractionAmount;
+    float smoothRadius = max(radius * 1.5, 30.0);
+    float gradRadius = min(smoothRadius, min(halfSize.x, halfSize.y));
+
+    float2 shapeGrad = gradSdRoundedRect(centeredCoord, halfSize, gradRadius);
+    float2 depthGrad = safeNormalize(centeredCoord, shapeGrad);
+    float2 grad = safeNormalize(shapeGrad + depthEffect * depthGrad, shapeGrad);
+
+    float2 refractedCoord = coord + d * grad;
+    // Chromatic spread is driven by the refraction gradient, not by the band width:
+    // a narrow band keeps the bend local, so it needs its own gain to stay visible.
+    float dispersionIntensity = chromaticAberration *
+        ((centeredCoord.x * centeredCoord.y) / (halfSize.x * halfSize.y));
+    float2 dispersedCoord = d * grad * dispersionIntensity;
+
+    half4 color = half4(0.0);
+
+    half4 red = content.eval(refractedCoord + dispersedCoord);
+    color.r += red.r / 3.5;
+    color.a += red.a / 7.0;
+
+    half4 orange = content.eval(refractedCoord + dispersedCoord * (2.0 / 3.0));
+    color.r += orange.r / 3.5;
+    color.g += orange.g / 7.0;
+    color.a += orange.a / 7.0;
+
+    half4 yellow = content.eval(refractedCoord + dispersedCoord * (1.0 / 3.0));
+    color.r += yellow.r / 3.5;
+    color.g += yellow.g / 3.5;
+    color.a += yellow.a / 7.0;
+
+    half4 green = content.eval(refractedCoord);
+    color.g += green.g / 3.5;
+    color.a += green.a / 7.0;
+
+    half4 cyan = content.eval(refractedCoord - dispersedCoord * (1.0 / 3.0));
+    color.g += cyan.g / 3.5;
+    color.b += cyan.b / 3.0;
+    color.a += cyan.a / 7.0;
+
+    half4 blue = content.eval(refractedCoord - dispersedCoord * (2.0 / 3.0));
+    color.b += blue.b / 3.0;
+    color.a += blue.a / 7.0;
+
+    half4 purple = content.eval(refractedCoord - dispersedCoord);
+    color.r += purple.r / 7.0;
+    color.b += purple.b / 3.0;
+    color.a += purple.a / 7.0;
+
+    color = saturateColor(color, chromaMultiplier);
+    float3 target = (whitePoint > 0.0) ? float3(1.0) : float3(0.0);
+    color.rgb = mix(color.rgb, target, abs(whitePoint));
+    color.rgb = (color.rgb - 0.5) * (1.0 + contrast) + 0.5;
+
+    half3 tintedRGB = mix(color.rgb, tintColor, tintAlpha);
+    float edgeCoverage = edgeOnly > 0.5
+        ? 1.0 - smoothstep(0.0, refractionHeight, -sd) : 1.0;
+    return half4(tintedRGB, color.a) * edgeCoverage;
+}
